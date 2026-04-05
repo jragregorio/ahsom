@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Seafood Market</title>
+  <style>
+    :root {
+      --bg: #f7fbfc;
+      --surface: #ffffff;
+      --surface-soft: #eef6f8;
+      --text: #16313a;
+      --muted: #5f7880;
+      --accent: #157a8a;
+      --accent-dark: #0f5e69;
+      --border: #d8e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(1080px, calc(100% - 2rem));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.92);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(6px);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.25rem;
+      list-style: none;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .cart-indicator {
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      font-size: 0.9rem;
+      color: var(--text);
+      white-space: nowrap;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .hero {
+      padding: 4.5rem 0 3rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: 0 auto 1.5rem;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 0.85rem 1.4rem;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .button:hover {
+      background: var(--accent-dark);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title h2 {
+      font-size: 1.6rem;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .products {
+      padding: 1rem 0 4rem;
+    }
+
+    .shop-layout {
+      display: block;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(16, 70, 80, 0.06);
+    }
+
+    .card-image {
+      height: 190px;
+      background: linear-gradient(135deg, #d7edf2, #edf7fa);
+      overflow: hidden;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-body {
+      padding: 1.25rem;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 0.65rem;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .price {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .mini-button {
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .mini-button:hover {
+      background: #dceef2;
+    }
+
+    .cart-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px 0 0 20px;
+      padding: 1.25rem;
+      box-shadow: 0 10px 30px rgba(16, 70, 80, 0.06);
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(420px, calc(100vw - 2rem));
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 30;
+      transform: translateX(calc(100% + 1rem));
+      transition: transform 0.25s ease;
+    }
+
+    .cart-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      position: sticky;
+      top: -1.25rem;
+      z-index: 2;
+      margin: -1.25rem -1.25rem 0.75rem;
+      padding: 1rem 1.25rem 0.85rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cart-panel h3 {
+      font-size: 1.15rem;
+    }
+
+    .cart-copy {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-bottom: 1rem;
+    }
+
+    .cart-items {
+      list-style: none;
+      display: grid;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cart-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .cart-item strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .cart-meta {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-weight: 700;
+      margin-top: 1rem;
+    }
+
+    .estimate-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 0.75rem;
+    }
+
+    .cart-empty {
+      color: var(--muted);
+      font-size: 0.93rem;
+      padding: 0.3rem 0 0.6rem;
+    }
+
+    .cart-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .secondary-button {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .checkout-button {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 999px;
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .checkout-button:hover {
+      background: var(--accent-dark);
+    }
+
+    .checkout-button:disabled,
+    .secondary-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .checkout-form {
+      margin-top: 1.25rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--border);
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .checkout-form h4 {
+      font-size: 1rem;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .field-group label {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    .field-group textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .field-help {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .form-status {
+      padding: 0.8rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .form-status.is-visible {
+      display: block;
+    }
+
+    .form-status.is-error {
+      background: #fff2f0;
+      color: #8b2d1f;
+      border: 1px solid #f2c6bf;
+    }
+
+    .form-status.is-success {
+      background: #eff8f2;
+      color: #21613c;
+      border: 1px solid #c6e5d1;
+    }
+
+    .form-status.is-loading {
+      background: #eef6f8;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .cart-close {
+      display: inline-flex;
+      width: 2.2rem;
+      height: 2.2rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .cart-backdrop {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 28, 34, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 25;
+    }
+
+    .mobile-cart-toggle {
+      display: none;
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 40;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1rem;
+      border: 0;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      box-shadow: 0 14px 30px rgba(15, 94, 105, 0.22);
+      cursor: pointer;
+    }
+
+    .mobile-cart-toggle-count {
+      min-width: 1.75rem;
+      height: 1.75rem;
+      padding: 0 0.45rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.88rem;
+    }
+
+    .order-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 28, 34, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 60;
+    }
+
+    .order-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .order-modal {
+      width: min(100%, 420px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(8, 28, 34, 0.18);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .order-modal-spinner {
+      width: 3rem;
+      height: 3rem;
+      margin: 0 auto 1rem;
+      border: 3px solid #d8e7eb;
+      border-top-color: var(--accent);
+      border-radius: 999px;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .order-modal h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-modal p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .order-modal-button {
+      display: none;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 0;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .order-modal-backdrop.is-success .order-modal-button,
+    .order-modal-backdrop.is-error .order-modal-button {
+      display: inline-block;
+    }
+
+    .order-modal-backdrop.is-success .order-modal-spinner,
+    .order-modal-backdrop.is-error .order-modal-spinner {
+      display: none;
+    }
+
+    body.order-modal-open {
+      overflow: hidden;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    footer {
+      padding: 1.5rem 0 2.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    body.cart-open {
+      overflow: hidden;
+    }
+
+    body.cart-open .cart-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.cart-open .cart-panel {
+      transform: translateX(0);
+    }
+
+    @media (max-width: 860px) {
+      .shop-layout,
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title,
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero {
+        text-align: left;
+      }
+
+      .hero p {
+        margin-left: 0;
+      }
+
+      .cart-indicator {
+        display: none;
+      }
+
+      .cart-panel {
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: min(100%, 640px);
+        max-height: min(84vh, 760px);
+        margin: 0 auto;
+        border-radius: 22px 22px 0 0;
+        transform: translateY(calc(100% + 1rem));
+      }
+
+      .mobile-cart-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      body.cart-open .cart-panel {
+        transform: translateY(0);
+      }
+
+      body.cart-open .mobile-cart-toggle {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">Alabang Hills Seafood Online Market by Marik</div>
+      <ul class="nav-links">
+        <li>Fresh Picks</li>
+        <li>Delivery</li>
+        <li>Contact</li>
+        <li>About</li>
+      </ul>
+      <button id="desktop-cart-toggle" class="cart-indicator" type="button" aria-expanded="false" aria-controls="cart-panel">
+        Cart: <span id="cart-count">0</span> items
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Fresh seafood, simply presented.</h1>
+        <p>
+          A minimalist storefront for selling premium seafood online. Focused on
+          clarity, freshness, and easy shopping.
+        </p>
+        <a class="button" href="#products">Shop Fresh Picks</a>
+      </div>
+    </section>
+
+    <section class="products" id="products">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>Featured Seafood</h2>
+            <p>Fresh market selections based on your current seafood price list.</p>
+          </div>
+        </div>
+
+        <div class="shop-layout">
+          <div class="product-grid">
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-pompano.png" alt="Fresh pompano on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Best Seller</span>
+                <h3>Pompano</h3>
+                <p>Clean, mild-flavored whole fish that works well for steaming, frying, or simple home-style meals.</p>
+                <div class="price-row">
+                  <span class="price">PHP 340.00 / kilo</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Pompano" data-price="340.00" data-unit="/ kilo">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-tilapia.png" alt="Fresh tilapia on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Daily Catch</span>
+                <h3>Tilapia</h3>
+                <p>Budget-friendly everyday fish that is easy to fry, grill, or cook in familiar Filipino recipes.</p>
+                <div class="price-row">
+                  <span class="price">PHP 125.00</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Tilapia" data-price="125.00" data-unit="">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-salmon.png" alt="Fresh salmon fillet on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Premium Cut</span>
+                <h3>Salmon</h3>
+                <p>Rich, premium salmon that is ideal for baking, pan-searing, or serving as a special family meal.</p>
+                <div class="price-row">
+                  <span class="price">PHP 600.00 / kilo</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Salmon" data-price="600.00" data-unit="/ kilo">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-shrimp.png" alt="Fresh shrimp on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Market Favorite</span>
+                <h3>Shrimp</h3>
+                <p>Fresh shrimp for stir-fry, butter garlic dishes, soups, and quick seafood platters at home.</p>
+                <div class="price-row">
+                  <span class="price">PHP 530.00 / kilo</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Shrimp" data-price="530.00" data-unit="/ kilo">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-bangus.png" alt="Fresh bangus on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Home Favorite</span>
+                <h3>Bangus</h3>
+                <p>Classic milkfish option for grilling, frying, or everyday family recipes with familiar local flavor.</p>
+                <div class="price-row">
+                  <span class="price">PHP 200.00 / kilo</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Bangus" data-price="200.00" data-unit="/ kilo">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-sugpo.png" alt="Fresh sugpo prawns on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Large Prawns</span>
+                <h3>Sugpo</h3>
+                <p>Large prawns for grilling, buttered seafood plates, and special-occasion family meals.</p>
+                <div class="price-row">
+                  <span class="price">PHP 1,400.00</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Sugpo" data-price="1400.00" data-unit="">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-tahong.png" alt="Fresh tahong mussels on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Shellfish</span>
+                <h3>Tahong</h3>
+                <p>Fresh mussels that are great for soups, steaming, or simple garlic-butter preparations.</p>
+                <div class="price-row">
+                  <span class="price">PHP 170.00</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Tahong" data-price="170.00" data-unit="">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-hasa-hasa.png" alt="Fresh hasa hasa on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Daily Fish</span>
+                <h3>Hasa Hasa</h3>
+                <p>Versatile fish option for frying or stewing, added from your handwritten market list.</p>
+                <div class="price-row">
+                  <span class="price">PHP 350.00</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Hasa Hasa" data-price="350.00" data-unit="">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-squid.png" alt="Fresh squid on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Seafood Staple</span>
+                <h3>Squid</h3>
+                <p>Fresh squid for adobo, calamares, stuffing, or classic seafood dishes at home.</p>
+                <div class="price-row">
+                  <span class="price">PHP 450.00 / kilo</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Squid" data-price="450.00" data-unit="/ kilo">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-image">
+                <img src="images/product-matambaka.png" alt="Fresh matambaka on ice" width="400" height="190" loading="lazy">
+              </div>
+              <div class="card-body">
+                <span class="eyebrow">Local Pick</span>
+                <h3>Matambaka</h3>
+                <p>Local fish choice for simple frying and grilling, with pricing taken from your attached list.</p>
+                <div class="price-row">
+                  <span class="price">PHP 300.00</span>
+                  <button class="mini-button add-to-cart" type="button" data-name="Matambaka" data-price="300.00" data-unit="">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <aside id="cart-panel" class="cart-panel" aria-label="Shopping cart">
+            <div class="cart-panel-header">
+              <h3>Your Cart</h3>
+              <button id="close-cart" class="cart-close" type="button" aria-label="Close cart">x</button>
+            </div>
+            <p class="cart-copy">Review the items here, then send an order request for manual confirmation.</p>
+            <div id="cart-empty" class="cart-empty">Your cart is empty.</div>
+            <ul id="cart-items" class="cart-items"></ul>
+            <div class="cart-total">
+              <span>Total</span>
+              <span id="cart-total">PHP 0.00</span>
+            </div>
+            <p class="estimate-note">Shown total is an estimate. Final amount will still be confirmed manually.</p>
+            <form id="checkout-form" class="checkout-form">
+              <h4>Customer Details</h4>
+              <div id="form-status" class="form-status" aria-live="polite"></div>
+
+              <div class="field-group">
+                <label for="customer-name">Full name</label>
+                <input id="customer-name" name="customerName" type="text" required placeholder="Juan Dela Cruz">
+              </div>
+
+              <div class="field-group">
+                <label for="customer-phone">Mobile number</label>
+                <input id="customer-phone" name="customerPhone" type="tel" required placeholder="09XXXXXXXXX">
+              </div>
+
+              <div class="field-group">
+                <label for="fulfillment-type">Delivery or pickup</label>
+                <select id="fulfillment-type" name="fulfillmentType" required>
+                  <option value="">Select an option</option>
+                  <option value="Delivery">Delivery</option>
+                  <option value="Pickup">Pickup</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="customer-address">Address or meetup note</label>
+                <textarea id="customer-address" name="customerAddress" placeholder="House number, street, village, or pickup meetup note"></textarea>
+                <div class="field-help">Required for delivery. For pickup, a short meetup note is enough.</div>
+              </div>
+
+              <div class="field-group">
+                <label for="customer-notes">Additional notes</label>
+                <textarea id="customer-notes" name="customerNotes" placeholder="Preferred schedule, cleaning request, or other notes"></textarea>
+              </div>
+
+              <div class="cart-actions">
+                <button id="clear-cart" class="secondary-button" type="button">Clear</button>
+                <button id="checkout-button" class="checkout-button" type="submit">Place Order</button>
+              </div>
+            </form>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">Created by JRAG 2026</div>
+  </footer>
+
+  <div id="cart-backdrop" class="cart-backdrop" aria-hidden="true"></div>
+  <button id="mobile-cart-toggle" class="mobile-cart-toggle" type="button" aria-expanded="false" aria-controls="cart-panel">
+    <span>Cart</span>
+    <span id="mobile-cart-count" class="mobile-cart-toggle-count">0</span>
+  </button>
+  <div id="order-modal-backdrop" class="order-modal-backdrop" aria-live="polite" aria-hidden="true">
+    <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="order-modal-title">
+      <div class="order-modal-spinner" aria-hidden="true"></div>
+      <h3 id="order-modal-title">Submitting your order...</h3>
+      <p id="order-modal-message">Please wait and do not close this page while we save and confirm your order request.</p>
+      <button id="order-modal-button" class="order-modal-button" type="button">Done</button>
+    </div>
+  </div>
+
+  <script>
+    const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbzEkPMK8rnAVdDDaqOEtnnWzrwIbCLVpQXFG_lR9vr5J5dwAHDtt2SsRJ6UJ7Bgxu8/exec";
+    const cart = [];
+    const cartBackdrop = document.getElementById("cart-backdrop");
+    const cartCount = document.getElementById("cart-count");
+    const desktopCartToggle = document.getElementById("desktop-cart-toggle");
+    const mobileCartCount = document.getElementById("mobile-cart-count");
+    const mobileCartToggle = document.getElementById("mobile-cart-toggle");
+    const cartItems = document.getElementById("cart-items");
+    const cartEmpty = document.getElementById("cart-empty");
+    const cartTotal = document.getElementById("cart-total");
+    const checkoutForm = document.getElementById("checkout-form");
+    const formStatus = document.getElementById("form-status");
+    const orderModalBackdrop = document.getElementById("order-modal-backdrop");
+    const orderModalTitle = document.getElementById("order-modal-title");
+    const orderModalMessage = document.getElementById("order-modal-message");
+    const orderModalButton = document.getElementById("order-modal-button");
+    const clearCartButton = document.getElementById("clear-cart");
+    const checkoutButton = document.getElementById("checkout-button");
+    const closeCartButton = document.getElementById("close-cart");
+    const customerNameInput = document.getElementById("customer-name");
+    const customerPhoneInput = document.getElementById("customer-phone");
+    const fulfillmentTypeInput = document.getElementById("fulfillment-type");
+    const customerAddressInput = document.getElementById("customer-address");
+    const customerNotesInput = document.getElementById("customer-notes");
+    const addToCartButtons = document.querySelectorAll(".add-to-cart");
+    let isSubmitting = false;
+
+    function formatPrice(value) {
+      return "PHP " + value.toFixed(2);
+    }
+
+    function isMobileCartView() {
+      return window.matchMedia("(max-width: 860px)").matches;
+    }
+
+    function setCartOpen(isOpen) {
+      document.body.classList.toggle("cart-open", isOpen);
+      desktopCartToggle.setAttribute("aria-expanded", String(isOpen));
+      mobileCartToggle.setAttribute("aria-expanded", String(isOpen));
+    }
+
+    function showOrderModal(mode, title, message, buttonLabel) {
+      orderModalBackdrop.className = "order-modal-backdrop is-open";
+      orderModalBackdrop.classList.add(mode);
+      orderModalBackdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("order-modal-open");
+      orderModalTitle.textContent = title;
+      orderModalMessage.textContent = message;
+      orderModalButton.textContent = buttonLabel || "Done";
+    }
+
+    function hideOrderModal() {
+      orderModalBackdrop.className = "order-modal-backdrop";
+      orderModalBackdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("order-modal-open");
+    }
+
+    function setFormStatus(message, status) {
+      formStatus.textContent = message;
+      formStatus.className = "form-status";
+
+      if (!message) {
+        return;
+      }
+
+      formStatus.classList.add("is-visible");
+      formStatus.classList.add(status);
+    }
+
+    function getCartSummary() {
+      return cart.map((item) => `${item.name} x${item.quantity}`).join(", ");
+    }
+
+    function getSubtotal() {
+      return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    }
+
+    function updateActionState() {
+      const hasItems = cart.length > 0;
+      clearCartButton.disabled = !hasItems || isSubmitting;
+      checkoutButton.disabled = !hasItems || isSubmitting;
+    }
+
+    function renderCart() {
+      cartItems.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartEmpty.style.display = "block";
+        cartCount.textContent = "0";
+        mobileCartCount.textContent = "0";
+        cartTotal.textContent = "PHP 0.00";
+        updateActionState();
+        return;
+      }
+
+      cartEmpty.style.display = "none";
+
+      let totalItems = 0;
+      let totalPrice = 0;
+
+      cart.forEach((item) => {
+        totalItems += item.quantity;
+        totalPrice += item.price * item.quantity;
+
+        const listItem = document.createElement("li");
+        listItem.className = "cart-item";
+        listItem.innerHTML = `
+          <div>
+            <strong>${item.name}</strong>
+            <div class="cart-meta">${formatPrice(item.price)} ${item.unit}</div>
+          </div>
+          <div class="cart-meta">x${item.quantity}</div>
+        `;
+        cartItems.appendChild(listItem);
+      });
+
+      cartCount.textContent = String(totalItems);
+      mobileCartCount.textContent = String(totalItems);
+      cartTotal.textContent = formatPrice(totalPrice);
+      updateActionState();
+    }
+
+    addToCartButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const name = button.dataset.name;
+        const price = Number(button.dataset.price);
+        const unit = button.dataset.unit;
+        const existingItem = cart.find((item) => item.name === name);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({ name, price, unit, quantity: 1 });
+        }
+
+        renderCart();
+      });
+    });
+
+    desktopCartToggle.addEventListener("click", () => {
+      setCartOpen(!document.body.classList.contains("cart-open"));
+    });
+
+    mobileCartToggle.addEventListener("click", () => {
+      setCartOpen(!document.body.classList.contains("cart-open"));
+    });
+
+    closeCartButton.addEventListener("click", () => {
+      setCartOpen(false);
+    });
+
+    cartBackdrop.addEventListener("click", () => {
+      setCartOpen(false);
+    });
+
+    window.addEventListener("resize", () => {
+      if (isMobileCartView()) {
+        return;
+      }
+
+      if (!document.body.classList.contains("cart-open")) {
+        setCartOpen(false);
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (orderModalBackdrop.classList.contains("is-open") && event.key === "Escape" && !isSubmitting) {
+        hideOrderModal();
+        return;
+      }
+
+      if (event.key === "Escape") {
+        setCartOpen(false);
+      }
+    });
+
+    orderModalButton.addEventListener("click", () => {
+      hideOrderModal();
+    });
+
+    window.addEventListener("beforeunload", (event) => {
+      if (!isSubmitting) {
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = "";
+    });
+
+    fulfillmentTypeInput.addEventListener("change", () => {
+      const isDelivery = fulfillmentTypeInput.value === "Delivery";
+      customerAddressInput.required = isDelivery;
+      customerAddressInput.placeholder = isDelivery
+        ? "House number, street, village, city"
+        : "Pickup meetup note or branch detail";
+    });
+
+    clearCartButton.addEventListener("click", () => {
+      cart.length = 0;
+      setFormStatus("", "");
+      renderCart();
+    });
+
+    checkoutForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (cart.length === 0) {
+        setFormStatus("Add at least one item before placing an order.", "is-error");
+        return;
+      }
+
+      if (!ORDER_ENDPOINT || ORDER_ENDPOINT.includes("PASTE_YOUR_GOOGLE_APPS_SCRIPT")) {
+        setFormStatus("Order form is ready, but you still need to paste your Google Apps Script web app URL in the page script.", "is-error");
+        return;
+      }
+
+      if (fulfillmentTypeInput.value === "Delivery" && !customerAddressInput.value.trim()) {
+        setFormStatus("Please enter the delivery address before placing the order.", "is-error");
+        customerAddressInput.focus();
+        return;
+      }
+
+      const orderPayload = {
+        submittedAt: new Date().toISOString(),
+        customerName: customerNameInput.value.trim(),
+        customerPhone: customerPhoneInput.value.trim(),
+        fulfillmentType: fulfillmentTypeInput.value,
+        customerAddress: customerAddressInput.value.trim(),
+        customerNotes: customerNotesInput.value.trim(),
+        items: cart.map((item) => ({
+          name: item.name,
+          unit: item.unit,
+          price: item.price,
+          quantity: item.quantity,
+          lineTotal: item.price * item.quantity
+        })),
+        itemsSummary: getCartSummary(),
+        totalItems: cart.reduce((total, item) => total + item.quantity, 0),
+        subtotal: getSubtotal(),
+        currency: "PHP",
+        status: "New"
+      };
+
+      isSubmitting = true;
+      checkoutButton.textContent = "Sending...";
+      setFormStatus("Sending order request...", "is-loading");
+      updateActionState();
+      showOrderModal(
+        "is-loading",
+        "Submitting your order...",
+        "Please wait and do not close this page while we save and confirm your order request."
+      );
+
+      try {
+        await fetch(ORDER_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(orderPayload)
+        });
+
+        checkoutForm.reset();
+        customerAddressInput.required = false;
+        customerAddressInput.placeholder = "House number, street, village, or pickup meetup note";
+        cart.length = 0;
+        setFormStatus("Order request sent. Final total and payment details can be confirmed manually.", "is-success");
+        renderCart();
+        setCartOpen(false);
+        showOrderModal(
+          "is-success",
+          "Order received",
+          "Your order request was saved successfully. Please wait for manual confirmation of the final total and payment details.",
+          "Close"
+        );
+      } catch (error) {
+        setFormStatus("Unable to send the order right now. Please try again after checking the Apps Script deployment URL.", "is-error");
+        setCartOpen(true);
+        showOrderModal(
+          "is-error",
+          "Order not saved",
+          "We could not save your order right now. Please stay on the page and try placing the order again.",
+          "Return to cart"
+        );
+      } finally {
+        isSubmitting = false;
+        checkoutButton.textContent = "Place Order";
+        updateActionState();
+      }
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>
