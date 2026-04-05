@@ -150,11 +150,14 @@
     .card-image {
       height: 190px;
       background: linear-gradient(135deg, #d7edf2, #edf7fa);
-      display: grid;
-      place-items: center;
-      color: var(--accent-dark);
-      font-size: 2.25rem;
-      font-weight: 700;
+      overflow: hidden;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .card-body {
@@ -671,7 +674,9 @@
         <div class="shop-layout">
           <div class="product-grid">
             <article class="card">
-              <div class="card-image">01</div>
+              <div class="card-image">
+                <img src="images/product-pompano.png" alt="Fresh pompano on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Best Seller</span>
                 <h3>Pompano</h3>
@@ -684,7 +689,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">02</div>
+              <div class="card-image">
+                <img src="images/product-tilapia.png" alt="Fresh tilapia on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Daily Catch</span>
                 <h3>Tilapia</h3>
@@ -697,7 +704,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">03</div>
+              <div class="card-image">
+                <img src="images/product-salmon.png" alt="Fresh salmon fillet on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Premium Cut</span>
                 <h3>Salmon</h3>
@@ -710,7 +719,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">04</div>
+              <div class="card-image">
+                <img src="images/product-shrimp.png" alt="Fresh shrimp on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Market Favorite</span>
                 <h3>Shrimp</h3>
@@ -723,7 +734,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">05</div>
+              <div class="card-image">
+                <img src="images/product-bangus.png" alt="Fresh bangus on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Home Favorite</span>
                 <h3>Bangus</h3>
@@ -736,7 +749,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">06</div>
+              <div class="card-image">
+                <img src="images/product-sugpo.png" alt="Fresh sugpo prawns on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Large Prawns</span>
                 <h3>Sugpo</h3>
@@ -749,7 +764,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">07</div>
+              <div class="card-image">
+                <img src="images/product-tahong.png" alt="Fresh tahong mussels on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Shellfish</span>
                 <h3>Tahong</h3>
@@ -762,7 +779,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">08</div>
+              <div class="card-image">
+                <img src="images/product-hasa-hasa.png" alt="Fresh hasa hasa on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Daily Fish</span>
                 <h3>Hasa Hasa</h3>
@@ -775,7 +794,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">09</div>
+              <div class="card-image">
+                <img src="images/product-squid.png" alt="Fresh squid on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Seafood Staple</span>
                 <h3>Squid</h3>
@@ -788,7 +809,9 @@
             </article>
 
             <article class="card">
-              <div class="card-image">10</div>
+              <div class="card-image">
+                <img src="images/product-matambaka.png" alt="Fresh matambaka on ice" width="400" height="190" loading="lazy">
+              </div>
               <div class="card-body">
                 <span class="eyebrow">Local Pick</span>
                 <h3>Matambaka</h3>
