@@ -1416,7 +1416,7 @@
     const customerNotesInput = document.getElementById("customer-notes");
     const addToCartButtons = document.querySelectorAll(".add-to-cart");
     let isSubmitting = false;
-    let reloadAfterOrderModalClose = false;
+    let scrollToTopAfterOrderModalClose = false;
 
     function formatPrice(value) {
       return "PHP " + value.toFixed(2);
@@ -1466,9 +1466,12 @@
     }
 
     function dismissOrderModal() {
-      if (reloadAfterOrderModalClose) {
-        reloadAfterOrderModalClose = false;
-        window.location.reload();
+      if (scrollToTopAfterOrderModalClose) {
+        scrollToTopAfterOrderModalClose = false;
+        hideOrderModal();
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        });
         return;
       }
       hideOrderModal();
@@ -1708,7 +1711,7 @@
 
     checkoutForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      reloadAfterOrderModalClose = false;
+      scrollToTopAfterOrderModalClose = false;
 
       if (cart.length === 0) {
         setFormStatus("Add at least one item before placing an order.", "is-error");
@@ -1768,7 +1771,7 @@
           body: JSON.stringify(orderPayload)
         });
 
-        reloadAfterOrderModalClose = true;
+        scrollToTopAfterOrderModalClose = true;
         checkoutForm.reset();
         customerAddressInput.required = false;
         customerAddressInput.placeholder = "House number, street, village, or pickup meetup note";
