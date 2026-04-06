@@ -69,11 +69,17 @@ For day-to-day use, your wife only really needs to pay attention to:
 
 Keep it simple:
 
-- `New`
-- `Confirmed`
-- `Preparing`
-- `Delivered`
-- `Cancelled`
+| Status      | Suggested fill (hex) | Notes |
+|-------------|----------------------|--------|
+| `New`       | `#93C5FD`            | Medium blue — just arrived |
+| `Confirmed` | `#6EE7B7`            | Medium green — acknowledged |
+| `Preparing` | `#FCD34D`            | Medium amber — in progress |
+| `Delivered` | `#4ADE80`            | Medium green — completed |
+| `Cancelled` | `#FCA5A5`            | Medium red — stopped |
+
+Darker text on those backgrounds (for readability in Sheets): `#1E3A8A` (New), `#064E3B` (Confirmed / Delivered), `#78350F` (Preparing), `#7F1D1D` (Cancelled).
+
+Optional accent dots or badges (solid): `#2563EB` (New), `#059669` (Confirmed), `#D97706` (Preparing), `#16A34A` (Delivered), `#DC2626` (Cancelled).
 
 ## Best Practice For This Business
 
