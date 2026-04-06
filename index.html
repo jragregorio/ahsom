@@ -494,18 +494,30 @@
     .mini-button {
       padding: 0.7rem 1rem;
       border-radius: 999px;
-      background: var(--surface-soft);
-      color: var(--text);
+      background: var(--surface);
+      color: var(--accent);
       text-decoration: none;
       font-weight: 700;
       font-size: 0.9rem;
-      border: 0;
+      border: 2px solid var(--accent);
       cursor: pointer;
       font-family: inherit;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
 
     .mini-button:hover {
-      background: #dceef2;
+      background: #d8eef2;
+      border-color: var(--accent-dark);
+      color: var(--accent-dark);
+    }
+
+    .mini-button:active {
+      background: #c5e4ea;
+    }
+
+    .mini-button:focus-visible {
+      outline: 2px solid var(--accent-dark);
+      outline-offset: 2px;
     }
 
     /* Fixed layer without transform — transform on the same node as position:fixed
