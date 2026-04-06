@@ -508,22 +508,35 @@
       background: #dceef2;
     }
 
+    /* Fixed layer without transform — transform on the same node as position:fixed
+       breaks viewport anchoring in several browsers (top of panel clipped). */
+    .cart-panel-anchor {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(420px, calc(100vw - 2rem));
+      /* Above sticky header (z-index 100) so the cart is not hidden under it */
+      z-index: 110;
+      pointer-events: none;
+    }
+
+    body.cart-open .cart-panel-anchor {
+      pointer-events: auto;
+    }
+
     .cart-panel {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px 0 0 20px;
       padding: 0 1.25rem 1.25rem;
       box-shadow: 0 10px 30px rgba(16, 70, 80, 0.06);
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: min(420px, calc(100vw - 2rem));
-      height: auto;
-      max-height: 100vh;
-      max-height: 100dvh;
+      height: 100%;
+      max-height: 100%;
+      min-height: 0;
+      width: 100%;
       overflow-y: auto;
-      z-index: 30;
+      overscroll-behavior: contain;
       transform: translateX(calc(100% + 1rem));
       transition: transform 0.25s ease;
     }
@@ -744,7 +757,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
-      z-index: 25;
+      z-index: 105;
     }
 
     .order-modal-backdrop {
@@ -850,6 +863,10 @@
       margin-bottom: 0.85rem;
     }
 
+    .footer-content p.footer-credit {
+      text-align: center;
+    }
+
     .footer-credit {
       text-align: center;
       margin-top: 1.25rem;
@@ -941,17 +958,24 @@
         display: none;
       }
 
-      .cart-panel {
+      .cart-panel-anchor {
         left: 0;
         right: 0;
         top: auto;
         bottom: 0;
         width: min(100%, 640px);
         max-height: min(84vh, 760px);
+        height: auto;
         margin: 0 auto;
-        border-radius: 22px 22px 0 0;
-        transform: translateY(calc(100% + 1rem));
+        overflow: hidden;
         z-index: 110;
+      }
+
+      .cart-panel {
+        border-radius: 22px 22px 0 0;
+        height: auto;
+        max-height: 100%;
+        transform: translateY(calc(100% + 1rem));
       }
 
       .cart-panel-header {
@@ -1202,60 +1226,6 @@
               </div>
             </article>
           </div>
-
-          <aside id="cart-panel" class="cart-panel" aria-label="Shopping cart">
-            <div class="cart-panel-header">
-              <h3>Your Cart</h3>
-              <button id="close-cart" class="cart-close" type="button" aria-label="Close cart">x</button>
-            </div>
-            <p class="cart-copy">Review the items here, then send an order request for manual confirmation.</p>
-            <div id="cart-empty" class="cart-empty">Your cart is empty.</div>
-            <ul id="cart-items" class="cart-items"></ul>
-            <div class="cart-total">
-              <span>Total</span>
-              <span id="cart-total">PHP 0.00</span>
-            </div>
-            <p class="estimate-note">Shown total is an estimate. Final amount will still be confirmed manually.</p>
-            <form id="checkout-form" class="checkout-form">
-              <h4>Customer Details</h4>
-              <div id="form-status" class="form-status" aria-live="polite"></div>
-
-              <div class="field-group">
-                <label for="customer-name">Full name</label>
-                <input id="customer-name" name="customerName" type="text" required placeholder="Juan Dela Cruz">
-              </div>
-
-              <div class="field-group">
-                <label for="customer-phone">Mobile number</label>
-                <input id="customer-phone" name="customerPhone" type="tel" required placeholder="09XXXXXXXXX">
-              </div>
-
-              <div class="field-group">
-                <label for="fulfillment-type">Delivery or pickup</label>
-                <select id="fulfillment-type" name="fulfillmentType" required>
-                  <option value="">Select an option</option>
-                  <option value="Delivery">Delivery</option>
-                  <option value="Pickup">Pickup</option>
-                </select>
-              </div>
-
-              <div class="field-group">
-                <label for="customer-address">Address or meetup note</label>
-                <textarea id="customer-address" name="customerAddress" placeholder="House number, street, village, or pickup meetup note"></textarea>
-                <div class="field-help">Required for delivery. For pickup, a short meetup note is enough.</div>
-              </div>
-
-              <div class="field-group">
-                <label for="customer-notes">Additional notes</label>
-                <textarea id="customer-notes" name="customerNotes" placeholder="Preferred schedule, cleaning request, or other notes"></textarea>
-              </div>
-
-              <div class="cart-actions">
-                <button id="clear-cart" class="secondary-button" type="button">Clear</button>
-                <button id="checkout-button" class="checkout-button" type="submit">Place Order</button>
-              </div>
-            </form>
-          </aside>
         </div>
       </div>
     </section>
@@ -1263,10 +1233,65 @@
 
   <footer class="site-footer">
     <div class="container footer-content">
-      <h2 class="visually-hidden">About, delivery, and contact</h2>
       <p class="footer-credit">Created by JRAG 2026</p>
     </div>
   </footer>
+
+  <div class="cart-panel-anchor">
+    <aside id="cart-panel" class="cart-panel" aria-label="Shopping cart">
+      <div class="cart-panel-header">
+        <h3>Your Cart</h3>
+        <button id="close-cart" class="cart-close" type="button" aria-label="Close cart">x</button>
+      </div>
+      <p class="cart-copy">Review the items here, then send an order request for manual confirmation.</p>
+      <div id="cart-empty" class="cart-empty">Your cart is empty.</div>
+      <ul id="cart-items" class="cart-items"></ul>
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total">PHP 0.00</span>
+      </div>
+      <p class="estimate-note">Shown total is an estimate. Final amount will still be confirmed manually.</p>
+      <form id="checkout-form" class="checkout-form">
+        <h4>Customer Details</h4>
+        <div id="form-status" class="form-status" aria-live="polite"></div>
+
+        <div class="field-group">
+          <label for="customer-name">Full name</label>
+          <input id="customer-name" name="customerName" type="text" required placeholder="Juan Dela Cruz">
+        </div>
+
+        <div class="field-group">
+          <label for="customer-phone">Mobile number</label>
+          <input id="customer-phone" name="customerPhone" type="tel" required placeholder="09XXXXXXXXX">
+        </div>
+
+        <div class="field-group">
+          <label for="fulfillment-type">Delivery or pickup</label>
+          <select id="fulfillment-type" name="fulfillmentType" required>
+            <option value="">Select an option</option>
+            <option value="Delivery">Delivery</option>
+            <option value="Pickup">Pickup</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="customer-address">Address or meetup note</label>
+          <textarea id="customer-address" name="customerAddress" placeholder="House number, street, village, or pickup meetup note"></textarea>
+          <div class="field-help">Required for delivery. For pickup, a short meetup note is enough.</div>
+        </div>
+
+        <div class="field-group">
+          <label for="customer-notes">Additional notes</label>
+          <textarea id="customer-notes" name="customerNotes" placeholder="Preferred schedule, cleaning request, or other notes"></textarea>
+        </div>
+
+        <div class="cart-actions">
+          <button id="clear-cart" class="secondary-button" type="button">Clear</button>
+          <button id="checkout-button" class="checkout-button" type="submit">Place Order</button>
+        </div>
+      </form>
+    </aside>
+  </div>
 
   <div id="cart-backdrop" class="cart-backdrop" aria-hidden="true"></div>
   <div id="order-modal-backdrop" class="order-modal-backdrop" aria-live="polite" aria-hidden="true">
