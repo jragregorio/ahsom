@@ -1400,7 +1400,57 @@
 
   <script>
     const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbzEkPMK8rnAVdDDaqOEtnnWzrwIbCLVpQXFG_lR9vr5J5dwAHDtt2SsRJ6UJ7Bgxu8/exec";
-    const cart = [];
+    const CART_SESSION_KEY = "ahsom-cart-v1";
+
+    function isValidCartItem(item) {
+      return (
+        item &&
+        typeof item.name === "string" &&
+        item.name.trim() !== "" &&
+        typeof item.price === "number" &&
+        Number.isFinite(item.price) &&
+        item.price >= 0 &&
+        typeof item.unit === "string" &&
+        typeof item.quantity === "number" &&
+        Number.isInteger(item.quantity) &&
+        item.quantity > 0
+      );
+    }
+
+    function loadCartSession() {
+      try {
+        const raw = sessionStorage.getItem(CART_SESSION_KEY);
+        if (!raw) {
+          return [];
+        }
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          return [];
+        }
+        return parsed.filter(isValidCartItem).map((entry) => ({
+          name: entry.name.trim(),
+          price: entry.price,
+          unit: entry.unit,
+          quantity: entry.quantity
+        }));
+      } catch {
+        return [];
+      }
+    }
+
+    const cart = loadCartSession();
+
+    function persistCartSession() {
+      try {
+        if (cart.length === 0) {
+          sessionStorage.removeItem(CART_SESSION_KEY);
+        } else {
+          sessionStorage.setItem(CART_SESSION_KEY, JSON.stringify(cart));
+        }
+      } catch {
+        /* ignore quota / private mode */
+      }
+    }
     const cartBackdrop = document.getElementById("cart-backdrop");
     const cartCount = document.getElementById("cart-count");
     const desktopCartToggle = document.getElementById("desktop-cart-toggle");
@@ -1531,6 +1581,7 @@
     }
 
     function renderCart() {
+      persistCartSession();
       cartItems.innerHTML = "";
 
       if (cart.length === 0) {
