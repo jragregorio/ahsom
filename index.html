@@ -14,6 +14,8 @@
       --accent: #157a8a;
       --accent-dark: #0f5e69;
       --border: #d8e7eb;
+      --header-accent-border: rgba(21, 122, 138, 0.22);
+      --header-accent-glow: rgba(21, 122, 138, 0.12);
     }
 
     * {
@@ -35,12 +37,22 @@
     }
 
     header {
-      padding: 1.25rem 0;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.92);
+      padding: 1.15rem 0;
       position: sticky;
       top: 0;
-      backdrop-filter: blur(6px);
+      z-index: 20;
+      border-bottom: 1px solid var(--header-accent-border);
+      background: linear-gradient(
+        165deg,
+        #d8eef2 0%,
+        #e8f5f7 38%,
+        #f2f9fb 72%,
+        rgba(247, 251, 252, 0.97) 100%
+      );
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.65) inset,
+        0 8px 24px var(--header-accent-glow);
+      backdrop-filter: blur(8px);
     }
 
     .nav {
@@ -51,29 +63,75 @@
     }
 
     .brand {
-      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .brand::before {
+      content: "";
+      width: 3px;
+      align-self: stretch;
+      min-height: 1.35em;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+      flex-shrink: 0;
     }
 
     .nav-links {
       display: flex;
-      gap: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.35rem 1.25rem;
       list-style: none;
-      color: var(--muted);
       font-size: 0.95rem;
     }
 
+    .nav-links li {
+      color: #4a6d75;
+      padding: 0.2rem 0;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .nav-links li:hover {
+      color: var(--accent-dark);
+      border-bottom-color: rgba(21, 122, 138, 0.35);
+    }
+
     .cart-indicator {
-      padding: 0.45rem 0.85rem;
-      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(21, 122, 138, 0.4);
       border-radius: 999px;
-      background: var(--surface);
+      background: rgba(255, 255, 255, 0.88);
       font-size: 0.9rem;
-      color: var(--text);
+      color: var(--accent-dark);
       white-space: nowrap;
       font: inherit;
+      font-weight: 600;
       cursor: pointer;
+      box-shadow: 0 2px 10px rgba(15, 94, 105, 0.1);
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .cart-indicator:hover {
+      background: #fff;
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      box-shadow: 0 4px 14px rgba(15, 94, 105, 0.14);
+    }
+
+    .cart-indicator:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .hero {
