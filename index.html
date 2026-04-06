@@ -1416,6 +1416,7 @@
     const customerNotesInput = document.getElementById("customer-notes");
     const addToCartButtons = document.querySelectorAll(".add-to-cart");
     let isSubmitting = false;
+    let reloadAfterOrderModalClose = false;
 
     function formatPrice(value) {
       return "PHP " + value.toFixed(2);
@@ -1462,6 +1463,15 @@
       orderModalBackdrop.className = "order-modal-backdrop";
       orderModalBackdrop.setAttribute("aria-hidden", "true");
       document.body.classList.remove("order-modal-open");
+    }
+
+    function dismissOrderModal() {
+      if (reloadAfterOrderModalClose) {
+        reloadAfterOrderModalClose = false;
+        window.location.reload();
+        return;
+      }
+      hideOrderModal();
     }
 
     function setFormStatus(message, status) {
@@ -1656,7 +1666,7 @@
 
     document.addEventListener("keydown", (event) => {
       if (orderModalBackdrop.classList.contains("is-open") && event.key === "Escape" && !isSubmitting) {
-        hideOrderModal();
+        dismissOrderModal();
         return;
       }
 
@@ -1670,7 +1680,7 @@
     });
 
     orderModalButton.addEventListener("click", () => {
-      hideOrderModal();
+      dismissOrderModal();
     });
 
     window.addEventListener("beforeunload", (event) => {
@@ -1698,6 +1708,7 @@
 
     checkoutForm.addEventListener("submit", async (event) => {
       event.preventDefault();
+      reloadAfterOrderModalClose = false;
 
       if (cart.length === 0) {
         setFormStatus("Add at least one item before placing an order.", "is-error");
@@ -1757,11 +1768,12 @@
           body: JSON.stringify(orderPayload)
         });
 
+        reloadAfterOrderModalClose = true;
         checkoutForm.reset();
         customerAddressInput.required = false;
         customerAddressInput.placeholder = "House number, street, village, or pickup meetup note";
         cart.length = 0;
-        setFormStatus("Order request sent. Final total and payment details can be confirmed manually.", "is-success");
+        setFormStatus("", "");
         renderCart();
         setCartOpen(false);
         showOrderModal(
