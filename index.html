@@ -425,6 +425,9 @@
     }
 
     .card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -446,6 +449,9 @@
     }
 
     .card-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
       padding: 1.25rem;
     }
 
@@ -474,6 +480,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
+      margin-top: auto;
     }
 
     .price {
@@ -1604,3 +1611,4 @@
   </script>
 </body>
 </html>
+ 
