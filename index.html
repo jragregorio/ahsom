@@ -422,12 +422,14 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.25rem;
+      align-items: stretch;
     }
 
     .card {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+      display: grid;
+      grid-template-rows: 190px minmax(0, 1fr);
+      align-self: stretch;
+      min-height: 0;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -436,7 +438,8 @@
     }
 
     .card-image {
-      height: 190px;
+      height: 100%;
+      min-height: 0;
       background: linear-gradient(135deg, #d7edf2, #edf7fa);
       overflow: hidden;
     }
@@ -451,7 +454,7 @@
     .card-body {
       display: flex;
       flex-direction: column;
-      flex: 1 1 auto;
+      min-height: 0;
       padding: 1.25rem;
     }
 
