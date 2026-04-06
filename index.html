@@ -1409,6 +1409,7 @@
     const navMenuToggle = document.getElementById("nav-menu-toggle");
     const navBackdrop = document.getElementById("nav-backdrop");
     const navDrawer = document.getElementById("mobile-nav-drawer");
+    const cartPanel = document.getElementById("cart-panel");
     const cartItems = document.getElementById("cart-items");
     const cartEmpty = document.getElementById("cart-empty");
     const cartTotal = document.getElementById("cart-total");
@@ -1483,6 +1484,7 @@
         hideOrderModal();
         requestAnimationFrame(() => {
           window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+          cartPanel.scrollTop = 0;
         });
         return;
       }
