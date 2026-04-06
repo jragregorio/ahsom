@@ -1038,12 +1038,26 @@
         margin: 0 auto;
         overflow: hidden;
         z-index: 110;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
       }
 
+      /* max-height: 100% failed here: parent height was indefinite, so the panel grew
+         with content and the anchor’s overflow:hidden clipped it with no scrollbar.
+         Cap height on the panel itself + min-height:0 so flex child can shrink and scroll. */
       .cart-panel {
         border-radius: 22px 22px 0 0;
+        flex: 1 1 auto;
+        min-height: 0;
         height: auto;
-        max-height: 100%;
+        max-height: min(84vh, 760px);
+        max-height: min(84dvh, 760px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
         transform: translateY(calc(100% + 1rem));
       }
 
