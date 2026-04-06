@@ -512,13 +512,16 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px 0 0 20px;
-      padding: 1.25rem;
+      padding: 0 1.25rem 1.25rem;
       box-shadow: 0 10px 30px rgba(16, 70, 80, 0.06);
       position: fixed;
       top: 0;
       right: 0;
+      bottom: 0;
       width: min(420px, calc(100vw - 2rem));
-      height: 100vh;
+      height: auto;
+      max-height: 100vh;
+      max-height: 100dvh;
       overflow-y: auto;
       z-index: 30;
       transform: translateX(calc(100% + 1rem));
@@ -531,12 +534,13 @@
       align-items: center;
       gap: 0.75rem;
       position: sticky;
-      top: -1.25rem;
+      top: 0;
       z-index: 2;
-      margin: -1.25rem -1.25rem 0.75rem;
+      margin: 0 -1.25rem 0.75rem;
       padding: 1rem 1.25rem 0.85rem;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
+      border-radius: 20px 0 0 0;
     }
 
     .cart-panel h3 {
@@ -948,6 +952,10 @@
         border-radius: 22px 22px 0 0;
         transform: translateY(calc(100% + 1rem));
         z-index: 110;
+      }
+
+      .cart-panel-header {
+        border-radius: 21px 21px 0 0;
       }
 
       .cart-backdrop {
