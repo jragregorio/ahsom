@@ -576,6 +576,7 @@
     .cart-item {
       display: flex;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 0.75rem;
       padding-bottom: 0.85rem;
       border-bottom: 1px solid var(--border);
@@ -586,9 +587,77 @@
       padding-bottom: 0;
     }
 
+    .cart-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
     .cart-item strong {
       display: block;
       font-size: 0.95rem;
+    }
+
+    .cart-item-controls {
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    .cart-qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+    }
+
+    .cart-qty-btn {
+      box-sizing: border-box;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--accent-dark);
+      font: inherit;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(15, 94, 105, 0.12);
+      transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .cart-qty-btn:hover {
+      background: #dceef2;
+      color: var(--accent-dark);
+    }
+
+    .cart-qty-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .cart-qty-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .cart-qty-value {
+      min-width: 1.35rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text);
     }
 
     .cart-meta {
@@ -1407,6 +1476,19 @@
       checkoutButton.disabled = !hasItems || isSubmitting;
     }
 
+    function adjustCartLineQuantity(name, delta) {
+      const line = cart.find((item) => item.name === name);
+      if (!line) {
+        return;
+      }
+      line.quantity += delta;
+      if (line.quantity <= 0) {
+        cart.splice(cart.indexOf(line), 1);
+      }
+      setFormStatus("", "");
+      renderCart();
+    }
+
     function renderCart() {
       cartItems.innerHTML = "";
 
@@ -1430,13 +1512,49 @@
 
         const listItem = document.createElement("li");
         listItem.className = "cart-item";
-        listItem.innerHTML = `
-          <div>
-            <strong>${item.name}</strong>
-            <div class="cart-meta">${formatPrice(item.price)} ${item.unit}</div>
-          </div>
-          <div class="cart-meta">x${item.quantity}</div>
-        `;
+
+        const info = document.createElement("div");
+        info.className = "cart-item-info";
+        const title = document.createElement("strong");
+        title.textContent = item.name;
+        const meta = document.createElement("div");
+        meta.className = "cart-meta";
+        meta.textContent = [formatPrice(item.price), item.unit].filter(Boolean).join(" ");
+        info.append(title, meta);
+
+        const controls = document.createElement("div");
+        controls.className = "cart-item-controls";
+
+        const stepper = document.createElement("div");
+        stepper.className = "cart-qty-stepper";
+        stepper.setAttribute("role", "group");
+        stepper.setAttribute("aria-label", "Quantity for " + item.name);
+
+        const btnMinus = document.createElement("button");
+        btnMinus.type = "button";
+        btnMinus.className = "cart-qty-btn";
+        btnMinus.dataset.cartItem = item.name;
+        btnMinus.dataset.cartDelta = "-1";
+        btnMinus.setAttribute("aria-label", "Remove one " + item.name + " from cart");
+        btnMinus.textContent = "−";
+        btnMinus.disabled = isSubmitting;
+
+        const qtyVal = document.createElement("span");
+        qtyVal.className = "cart-qty-value";
+        qtyVal.textContent = String(item.quantity);
+
+        const btnPlus = document.createElement("button");
+        btnPlus.type = "button";
+        btnPlus.className = "cart-qty-btn";
+        btnPlus.dataset.cartItem = item.name;
+        btnPlus.dataset.cartDelta = "1";
+        btnPlus.setAttribute("aria-label", "Add one " + item.name + " to cart");
+        btnPlus.textContent = "+";
+        btnPlus.disabled = isSubmitting;
+
+        stepper.append(btnMinus, qtyVal, btnPlus);
+        controls.append(stepper);
+        listItem.append(info, controls);
         cartItems.appendChild(listItem);
       });
 
@@ -1445,6 +1563,19 @@
       cartTotal.textContent = formatPrice(totalPrice);
       updateActionState();
     }
+
+    cartItems.addEventListener("click", (event) => {
+      const btn = event.target.closest(".cart-qty-btn");
+      if (!btn || isSubmitting) {
+        return;
+      }
+      const name = btn.dataset.cartItem;
+      const delta = Number(btn.dataset.cartDelta);
+      if (!name || (delta !== 1 && delta !== -1)) {
+        return;
+      }
+      adjustCartLineQuantity(name, delta);
+    });
 
     addToCartButtons.forEach((button) => {
       button.addEventListener("click", () => {
@@ -1595,6 +1726,7 @@
       checkoutButton.textContent = "Sending...";
       setFormStatus("Sending order request...", "is-loading");
       updateActionState();
+      renderCart();
       showOrderModal(
         "is-loading",
         "Submitting your order...",
@@ -1637,6 +1769,7 @@
         isSubmitting = false;
         checkoutButton.textContent = "Place Order";
         updateActionState();
+        renderCart();
       }
     });
 
