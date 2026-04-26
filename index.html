@@ -914,6 +914,153 @@
       overflow: hidden;
     }
 
+    .link-button {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 0.25em;
+      text-decoration-thickness: 1px;
+    }
+
+    .link-button:hover {
+      color: var(--accent);
+    }
+
+    .link-button:focus-visible {
+      outline: 2px solid rgba(21, 122, 138, 0.45);
+      outline-offset: 4px;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    .contact-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 28, 34, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 210;
+    }
+
+    .contact-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .contact-modal {
+      width: min(100%, 520px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(8, 28, 34, 0.18);
+      padding: 1.25rem;
+      text-align: left;
+    }
+
+    .contact-modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-modal h3 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .contact-modal p {
+      color: var(--muted);
+      margin: 0.35rem 0 0;
+      font-size: 0.95rem;
+    }
+
+    .contact-modal-body {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: auto auto;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .contact-qr {
+      width: 100%;
+      max-width: 240px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .contact-qr img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .contact-row {
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(238, 246, 248, 0.35);
+    }
+
+    .contact-row strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-row a {
+      color: var(--accent-dark);
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .contact-row-mobile {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1.25rem 1rem;
+      min-height: 7.5rem;
+    }
+
+    .contact-row-mobile a {
+      font-size: 1.9rem;
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+    }
+
+    body.contact-modal-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 560px) {
+      .contact-modal-body {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-qr {
+        max-width: 100%;
+        justify-self: center;
+      }
+
+      .contact-row-mobile {
+        min-height: 0;
+      }
+    }
+
     @keyframes spin {
       from {
         transform: rotate(0deg);
@@ -1114,7 +1261,7 @@
       <ul class="nav-links" aria-label="Primary">
         <li><a href="#products">Fresh Picks</a></li>
         <li><a href="#delivery">Delivery</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><button id="contact-popup-trigger" class="link-button" type="button">Contact</button></li>
         <li><a href="#about">About</a></li>
       </ul>
       <div class="nav-mobile-actions">
@@ -1143,7 +1290,7 @@
     <ul class="nav-drawer-links">
       <li><a href="#products">Fresh Picks</a></li>
       <li><a href="#delivery">Delivery</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><button id="contact-popup-trigger-mobile" class="link-button" type="button">Contact</button></li>
       <li><a href="#about">About</a></li>
     </ul>
   </nav>
@@ -1153,9 +1300,9 @@
       <div class="container">
         <h1>Fresh seafood, simply presented.</h1>
         <p>
-          A minimalist storefront for selling premium seafood online. Focused on
-          clarity, freshness, and easy shopping.
+          A small, community-exclusive seafood shop bringing the freshest local catch straight to our neighbors. Accessible, friendly, and just for you.
         </p>
+ 
         <a class="button" href="#products">Shop Fresh Picks</a>
       </div>
     </section>
@@ -1389,6 +1536,37 @@
   </div>
 
   <div id="cart-backdrop" class="cart-backdrop" aria-hidden="true"></div>
+  <div id="contact-modal-backdrop" class="contact-modal-backdrop" aria-live="polite" aria-hidden="true">
+    <div class="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+      <div class="contact-modal-header">
+        <div>
+          <h3 id="contact-modal-title">Contact South Seafood Market</h3>
+          <p>Scan to join the Viber group or call/text the mobile number below.</p>
+        </div>
+        <button id="contact-modal-close" class="cart-close" type="button" aria-label="Close contact popup">x</button>
+      </div>
+      <div class="contact-modal-body">
+        <div class="contact-qr">
+          <img
+            id="contact-viber-qr"
+            src=""
+            alt="QR code to join the South Seafood Market Viber group"
+            width="220"
+            height="220"
+            loading="eager"
+          >
+        </div>
+        <div class="contact-row">
+          <strong>Viber group invite link</strong>
+          <a id="contact-viber-link" href="#" target="_blank" rel="noreferrer">Join Viber group</a>
+        </div>
+        <div class="contact-row contact-row-mobile">
+          <strong>Mobile</strong>
+          <a href="tel:09761633063">0976 163 3063</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="order-modal-backdrop" class="order-modal-backdrop" aria-live="polite" aria-hidden="true">
     <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="order-modal-title">
       <div class="order-modal-spinner" aria-hidden="true"></div>
@@ -1459,6 +1637,12 @@
     const navMenuToggle = document.getElementById("nav-menu-toggle");
     const navBackdrop = document.getElementById("nav-backdrop");
     const navDrawer = document.getElementById("mobile-nav-drawer");
+    const contactPopupTrigger = document.getElementById("contact-popup-trigger");
+    const contactPopupTriggerMobile = document.getElementById("contact-popup-trigger-mobile");
+    const contactModalBackdrop = document.getElementById("contact-modal-backdrop");
+    const contactModalClose = document.getElementById("contact-modal-close");
+    const contactViberQr = document.getElementById("contact-viber-qr");
+    const contactViberLink = document.getElementById("contact-viber-link");
     const cartPanel = document.getElementById("cart-panel");
     const cartItems = document.getElementById("cart-items");
     const cartEmpty = document.getElementById("cart-empty");
@@ -1480,6 +1664,20 @@
     const addToCartButtons = document.querySelectorAll(".add-to-cart");
     let isSubmitting = false;
     let scrollToTopAfterOrderModalClose = false;
+    const VIBER_GROUP_LINK =
+      "https://invite.viber.com/?g2=AQA9z%2Bm2GhhemVZyRS2IDHDnm1v8b7EdRxb6mic1%2FpUbEmrvMJwAqYFpmpOOGumI";
+
+    function showContactModal() {
+      contactModalBackdrop.className = "contact-modal-backdrop is-open";
+      contactModalBackdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("contact-modal-open");
+    }
+
+    function hideContactModal() {
+      contactModalBackdrop.className = "contact-modal-backdrop";
+      contactModalBackdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("contact-modal-open");
+    }
 
     function formatPrice(value) {
       return "PHP " + value.toFixed(2);
@@ -1510,6 +1708,39 @@
       document.body.classList.toggle("cart-open", isOpen);
       desktopCartToggle.setAttribute("aria-expanded", String(isOpen));
       mobileCartToggle.setAttribute("aria-expanded", String(isOpen));
+    }
+
+    function initContactPopup() {
+      if (!contactPopupTrigger || !contactPopupTriggerMobile || !contactModalBackdrop || !contactModalClose) {
+        return;
+      }
+
+      if (contactViberLink) {
+        contactViberLink.href = VIBER_GROUP_LINK;
+        contactViberLink.textContent = "Join Viber group";
+      }
+
+      if (contactViberQr) {
+        contactViberQr.src = "images/viber-qr.png";
+      }
+
+      const open = () => {
+        setNavOpen(false);
+        setCartOpen(false);
+        showContactModal();
+        requestAnimationFrame(() => contactModalClose.focus());
+      };
+
+      contactPopupTrigger.addEventListener("click", open);
+      contactPopupTriggerMobile.addEventListener("click", open);
+
+      contactModalClose.addEventListener("click", hideContactModal);
+
+      contactModalBackdrop.addEventListener("click", (event) => {
+        if (event.target === contactModalBackdrop) {
+          hideContactModal();
+        }
+      });
     }
 
     function showOrderModal(mode, title, message, buttonLabel) {
@@ -1739,6 +1970,10 @@
       }
 
       if (event.key === "Escape") {
+        if (contactModalBackdrop.classList.contains("is-open")) {
+          hideContactModal();
+          return;
+        }
         if (document.body.classList.contains("nav-open")) {
           setNavOpen(false);
           return;
@@ -1867,6 +2102,7 @@
       }
     });
 
+    initContactPopup();
     renderCart();
   </script>
 </body>
