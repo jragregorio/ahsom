@@ -1592,7 +1592,7 @@
 
   <footer class="site-footer">
     <div class="container footer-content">
-      <p class="footer-credit">Created by JRAG 2026 • v1.2.7</p>
+      <p class="footer-credit">Created by JRAG 2026 • v1.2.9</p>
     </div>
   </footer>
 
@@ -1643,6 +1643,15 @@
           <label for="customer-notes">Additional notes</label>
           <textarea id="customer-notes" name="customerNotes" placeholder="Preferred schedule, cleaning request, or other notes"></textarea>
         </div>
+        <input
+          id="checkout-website"
+          name="website"
+          type="text"
+          class="visually-hidden"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+        >
 
         <div class="cart-actions">
           <button id="clear-cart" class="secondary-button" type="button">Clear</button>
@@ -1735,6 +1744,12 @@
   <script>
     const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbzEkPMK8rnAVdDDaqOEtnnWzrwIbCLVpQXFG_lR9vr5J5dwAHDtt2SsRJ6UJ7Bgxu8/exec";
     const CART_SESSION_KEY = "ahsom-cart-v1";
+    const MAX_CART_LINES = 20;
+    const MAX_NOTES_LENGTH = 300;
+    const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
+    const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+    const LAST_ORDER_TS_KEY = "ahsom-last-order-ts";
+    const LAST_ORDER_SIGNATURE_KEY = "ahsom-last-order-signature";
 
     function isValidCartItem(item) {
       return (
@@ -1825,6 +1840,7 @@
     const fulfillmentTypeInput = document.getElementById("fulfillment-type");
     const customerAddressInput = document.getElementById("customer-address");
     const customerNotesInput = document.getElementById("customer-notes");
+    const checkoutHoneypotInput = document.getElementById("checkout-website");
     const addToCartButtons = document.querySelectorAll(".add-to-cart");
     let isSubmitting = false;
     let scrollToTopAfterOrderModalClose = false;
@@ -2021,6 +2037,39 @@
 
       formStatus.classList.add("is-visible");
       formStatus.classList.add(status);
+    }
+
+    function normalizeWhitespace(value) {
+      return String(value || "").trim().replace(/\s+/g, " ");
+    }
+
+    function normalizePhone(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
+
+    function isValidPhone(value) {
+      return /^09\d{9}$/.test(normalizePhone(value));
+    }
+
+    function normalizeOrderItemsForSignature(items) {
+      return items
+        .map((item) => ({
+          name: normalizeWhitespace(item.name).toLowerCase(),
+          quantity: Number(item.quantity) || 0,
+          price: Number(item.price) || 0
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name) || a.price - b.price || a.quantity - b.quantity)
+        .map((item) => `${item.name}|${item.price.toFixed(2)}|${item.quantity}`)
+        .join(";");
+    }
+
+    function buildOrderSignature(payload) {
+      const normalizedAddress = normalizeWhitespace(payload.customerAddress).toLowerCase();
+      const phone = normalizePhone(payload.customerPhone);
+      const fulfillment = normalizeWhitespace(payload.fulfillmentType).toLowerCase();
+      const itemsKey = normalizeOrderItemsForSignature(payload.items || []);
+      const subtotal = Number(payload.subtotal || 0).toFixed(2);
+      return [phone, fulfillment, normalizedAddress, itemsKey, subtotal].join("::");
     }
 
     function getCartSummary() {
@@ -2252,6 +2301,9 @@
 
     clearCartButton.addEventListener("click", () => {
       cart.length = 0;
+      checkoutForm.reset();
+      customerAddressInput.required = false;
+      customerAddressInput.placeholder = "House number, street, village, or pickup meetup note";
       setFormStatus("", "");
       renderCart();
     });
@@ -2283,6 +2335,7 @@
         fulfillmentType: fulfillmentTypeInput.value,
         customerAddress: customerAddressInput.value.trim(),
         customerNotes: customerNotesInput.value.trim(),
+        website: checkoutHoneypotInput ? checkoutHoneypotInput.value.trim() : "",
         items: cart.map((item) => ({
           name: item.name,
           unit: item.unit,
@@ -2296,6 +2349,45 @@
         currency: "PHP",
         status: "New"
       };
+
+      if (orderPayload.website) {
+        setFormStatus("Unable to process this request. Please refresh and try again.", "is-error");
+        return;
+      }
+
+      if (cart.length > MAX_CART_LINES) {
+        setFormStatus(`Your cart has too many item lines. Please keep it to ${MAX_CART_LINES} items or fewer.`, "is-error");
+        setCartOpen(true);
+        return;
+      }
+
+      if (!isValidPhone(orderPayload.customerPhone)) {
+        setFormStatus("Please enter a valid PH mobile number (example: 09XXXXXXXXX).", "is-error");
+        customerPhoneInput.focus();
+        return;
+      }
+
+      if (orderPayload.customerNotes.length > MAX_NOTES_LENGTH) {
+        setFormStatus(`Notes are too long. Please keep additional notes under ${MAX_NOTES_LENGTH} characters.`, "is-error");
+        customerNotesInput.focus();
+        return;
+      }
+
+      const now = Date.now();
+      const lastSentAt = Number(sessionStorage.getItem(LAST_ORDER_TS_KEY) || 0);
+      if (lastSentAt && now - lastSentAt < RATE_LIMIT_WINDOW_MS) {
+        setFormStatus("You just sent an order. Please wait about 1 minute before sending another request.", "is-error");
+        setCartOpen(true);
+        return;
+      }
+
+      const currentSignature = buildOrderSignature(orderPayload);
+      const lastSignature = sessionStorage.getItem(LAST_ORDER_SIGNATURE_KEY) || "";
+      if (lastSignature && lastSentAt && now - lastSentAt < DUPLICATE_WINDOW_MS && lastSignature === currentSignature) {
+        setFormStatus("This order looks identical to one sent recently. If this is intentional, please wait 10 minutes or edit your order.", "is-error");
+        setCartOpen(true);
+        return;
+      }
 
       isSubmitting = true;
       checkoutButton.textContent = "Sending...";
@@ -2317,6 +2409,8 @@
           },
           body: JSON.stringify(orderPayload)
         });
+        sessionStorage.setItem(LAST_ORDER_TS_KEY, String(Date.now()));
+        sessionStorage.setItem(LAST_ORDER_SIGNATURE_KEY, currentSignature);
 
         scrollToTopAfterOrderModalClose = true;
         checkoutForm.reset();
