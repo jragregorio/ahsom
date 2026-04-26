@@ -1061,6 +1061,123 @@
       }
     }
 
+    .delivery-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 28, 34, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 215;
+    }
+
+    .delivery-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .delivery-modal {
+      width: min(100%, 520px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(8, 28, 34, 0.18);
+      padding: 1.25rem;
+      text-align: left;
+    }
+
+    .delivery-modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .delivery-modal h3 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .delivery-modal p {
+      color: var(--muted);
+      margin: 0.35rem 0 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .delivery-options {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .delivery-option {
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(238, 246, 248, 0.35);
+    }
+
+    .delivery-option strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    body.delivery-modal-open {
+      overflow: hidden;
+    }
+
+    .about-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 28, 34, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 220;
+    }
+
+    .about-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .about-modal {
+      width: min(100%, 520px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(8, 28, 34, 0.18);
+      padding: 1.25rem;
+      text-align: left;
+    }
+
+    .about-modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .about-modal h3 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .about-modal p {
+      color: var(--muted);
+      margin: 0.6rem 0 0;
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    body.about-modal-open {
+      overflow: hidden;
+    }
+
     @keyframes spin {
       from {
         transform: rotate(0deg);
@@ -1260,9 +1377,9 @@
       </a>
       <ul class="nav-links" aria-label="Primary">
         <li><a href="#products">Fresh Picks</a></li>
-        <li><a href="#delivery">Delivery</a></li>
+        <li><button id="delivery-popup-trigger" class="link-button" type="button">Delivery</button></li>
         <li><button id="contact-popup-trigger" class="link-button" type="button">Contact</button></li>
-        <li><a href="#about">About</a></li>
+        <li><button id="about-popup-trigger" class="link-button" type="button">About</button></li>
       </ul>
       <div class="nav-mobile-actions">
         <button id="nav-menu-toggle" class="icon-button nav-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu">
@@ -1289,9 +1406,9 @@
     <p class="nav-drawer-label">Browse</p>
     <ul class="nav-drawer-links">
       <li><a href="#products">Fresh Picks</a></li>
-      <li><a href="#delivery">Delivery</a></li>
+      <li><button id="delivery-popup-trigger-mobile" class="link-button" type="button">Delivery</button></li>
       <li><button id="contact-popup-trigger-mobile" class="link-button" type="button">Contact</button></li>
-      <li><a href="#about">About</a></li>
+      <li><button id="about-popup-trigger-mobile" class="link-button" type="button">About</button></li>
     </ul>
   </nav>
 
@@ -1536,6 +1653,45 @@
   </div>
 
   <div id="cart-backdrop" class="cart-backdrop" aria-hidden="true"></div>
+  <div id="about-modal-backdrop" class="about-modal-backdrop" aria-live="polite" aria-hidden="true">
+    <div class="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
+      <div class="about-modal-header">
+        <div>
+          <h3 id="about-modal-title">About South Seafood Market</h3>
+        </div>
+        <button id="about-modal-close" class="cart-close" type="button" aria-label="Close about popup">x</button>
+      </div>
+      <p>
+        South Seafood Market is a small neighborhood seafood shop built for value and convenience—fresh selections at
+        prices that are consistently cheaper than typical market or grocery rates.
+        <br>
+        <br>
+        Order in a few taps, then choose what suits you best: doorstep delivery (exclusive for AHVA residents), self pick-up at 20 Toledo, or—if you live outside the community—your preferred courier service (e.g., Lalamove, Grab, etc.) for pick-up and delivery.
+   
+      </p>
+    </div>
+  </div>
+  <div id="delivery-modal-backdrop" class="delivery-modal-backdrop" aria-live="polite" aria-hidden="true">
+    <div class="delivery-modal" role="dialog" aria-modal="true" aria-labelledby="delivery-modal-title">
+      <div class="delivery-modal-header">
+        <div>
+          <h3 id="delivery-modal-title">Delivery options</h3>
+          <p>Choose the option that works best for you.</p>
+        </div>
+        <button id="delivery-modal-close" class="cart-close" type="button" aria-label="Close delivery popup">x</button>
+      </div>
+      <div class="delivery-options" aria-label="Delivery options list">
+        <div class="delivery-option">
+          <strong>Doorstep delivery</strong>
+          <p><strong>Within AHVA:</strong> fixed delivery rate of <strong>PHP 50.00</strong>. <strong>Outside AHVA:</strong> book your own rider (e.g., Lalamove, Grab, etc.) to pick up your order.</p>
+        </div>
+        <div class="delivery-option">
+          <strong>Self Pick-up</strong>
+          <p>Meet us at <strong>20 Toledo</strong> for a quick pick-up.</p>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="contact-modal-backdrop" class="contact-modal-backdrop" aria-live="polite" aria-hidden="true">
     <div class="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
       <div class="contact-modal-header">
@@ -1637,6 +1793,14 @@
     const navMenuToggle = document.getElementById("nav-menu-toggle");
     const navBackdrop = document.getElementById("nav-backdrop");
     const navDrawer = document.getElementById("mobile-nav-drawer");
+    const aboutPopupTrigger = document.getElementById("about-popup-trigger");
+    const aboutPopupTriggerMobile = document.getElementById("about-popup-trigger-mobile");
+    const aboutModalBackdrop = document.getElementById("about-modal-backdrop");
+    const aboutModalClose = document.getElementById("about-modal-close");
+    const deliveryPopupTrigger = document.getElementById("delivery-popup-trigger");
+    const deliveryPopupTriggerMobile = document.getElementById("delivery-popup-trigger-mobile");
+    const deliveryModalBackdrop = document.getElementById("delivery-modal-backdrop");
+    const deliveryModalClose = document.getElementById("delivery-modal-close");
     const contactPopupTrigger = document.getElementById("contact-popup-trigger");
     const contactPopupTriggerMobile = document.getElementById("contact-popup-trigger-mobile");
     const contactModalBackdrop = document.getElementById("contact-modal-backdrop");
@@ -1677,6 +1841,30 @@
       contactModalBackdrop.className = "contact-modal-backdrop";
       contactModalBackdrop.setAttribute("aria-hidden", "true");
       document.body.classList.remove("contact-modal-open");
+    }
+
+    function showDeliveryModal() {
+      deliveryModalBackdrop.className = "delivery-modal-backdrop is-open";
+      deliveryModalBackdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("delivery-modal-open");
+    }
+
+    function hideDeliveryModal() {
+      deliveryModalBackdrop.className = "delivery-modal-backdrop";
+      deliveryModalBackdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("delivery-modal-open");
+    }
+
+    function showAboutModal() {
+      aboutModalBackdrop.className = "about-modal-backdrop is-open";
+      aboutModalBackdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("about-modal-open");
+    }
+
+    function hideAboutModal() {
+      aboutModalBackdrop.className = "about-modal-backdrop";
+      aboutModalBackdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("about-modal-open");
     }
 
     function formatPrice(value) {
@@ -1739,6 +1927,57 @@
       contactModalBackdrop.addEventListener("click", (event) => {
         if (event.target === contactModalBackdrop) {
           hideContactModal();
+        }
+      });
+    }
+
+    function initDeliveryPopup() {
+      if (!deliveryPopupTrigger || !deliveryPopupTriggerMobile || !deliveryModalBackdrop || !deliveryModalClose) {
+        return;
+      }
+
+      const open = () => {
+        setNavOpen(false);
+        setCartOpen(false);
+        hideContactModal();
+        showDeliveryModal();
+        requestAnimationFrame(() => deliveryModalClose.focus());
+      };
+
+      deliveryPopupTrigger.addEventListener("click", open);
+      deliveryPopupTriggerMobile.addEventListener("click", open);
+
+      deliveryModalClose.addEventListener("click", hideDeliveryModal);
+
+      deliveryModalBackdrop.addEventListener("click", (event) => {
+        if (event.target === deliveryModalBackdrop) {
+          hideDeliveryModal();
+        }
+      });
+    }
+
+    function initAboutPopup() {
+      if (!aboutPopupTrigger || !aboutPopupTriggerMobile || !aboutModalBackdrop || !aboutModalClose) {
+        return;
+      }
+
+      const open = () => {
+        setNavOpen(false);
+        setCartOpen(false);
+        hideContactModal();
+        hideDeliveryModal();
+        showAboutModal();
+        requestAnimationFrame(() => aboutModalClose.focus());
+      };
+
+      aboutPopupTrigger.addEventListener("click", open);
+      aboutPopupTriggerMobile.addEventListener("click", open);
+
+      aboutModalClose.addEventListener("click", hideAboutModal);
+
+      aboutModalBackdrop.addEventListener("click", (event) => {
+        if (event.target === aboutModalBackdrop) {
+          hideAboutModal();
         }
       });
     }
@@ -1970,6 +2209,14 @@
       }
 
       if (event.key === "Escape") {
+        if (aboutModalBackdrop.classList.contains("is-open")) {
+          hideAboutModal();
+          return;
+        }
+        if (deliveryModalBackdrop.classList.contains("is-open")) {
+          hideDeliveryModal();
+          return;
+        }
         if (contactModalBackdrop.classList.contains("is-open")) {
           hideContactModal();
           return;
@@ -2102,7 +2349,9 @@
       }
     });
 
+    initDeliveryPopup();
     initContactPopup();
+    initAboutPopup();
     renderCart();
   </script>
 </body>
