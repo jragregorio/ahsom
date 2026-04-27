@@ -1592,7 +1592,7 @@
 
   <footer class="site-footer">
     <div class="container footer-content">
-      <p class="footer-credit">Created by JRAG 2026 • v1.2.9</p>
+      <p class="footer-credit">Created by JRAG 2026 • v1.3.0</p>
     </div>
   </footer>
 
@@ -1742,7 +1742,9 @@
   </div>
 
   <script>
-    const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbzEkPMK8rnAVdDDaqOEtnnWzrwIbCLVpQXFG_lR9vr5J5dwAHDtt2SsRJ6UJ7Bgxu8/exec";
+    const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycby6gJaaUC1fb_9QRXxXMIYBInF2Qd6kSZ4f1XBV8aSjm7cjeW6p9sqQgdWhqzIuUqE/exec";
+    const NTFY_TOPIC = "ssm_southseafoodmarket";
+    const NTFY_PUBLISH_URL = "https://ntfy.sh/" + NTFY_TOPIC;
     const CART_SESSION_KEY = "ahsom-cart-v1";
     const MAX_CART_LINES = 20;
     const MAX_NOTES_LENGTH = 300;
@@ -2070,6 +2072,36 @@
       const itemsKey = normalizeOrderItemsForSignature(payload.items || []);
       const subtotal = Number(payload.subtotal || 0).toFixed(2);
       return [phone, fulfillment, normalizedAddress, itemsKey, subtotal].join("::");
+    }
+
+    async function sendNtfyNotification(orderPayload) {
+      const customerName = normalizeWhitespace(orderPayload && orderPayload.customerName);
+      const fulfillmentType = normalizeWhitespace(orderPayload && orderPayload.fulfillmentType) || "Order";
+      const totalItems = Number(orderPayload && orderPayload.totalItems) || 0;
+      const subtotal = Number(orderPayload && orderPayload.subtotal) || 0;
+      const title = (customerName || "New order") + " - " + fulfillmentType;
+      const body = totalItems + " item(s) - " + formatPrice(subtotal);
+      try {
+        const response = await fetch(NTFY_PUBLISH_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+            Title: title
+          },
+          body: body
+        });
+
+        if (!response.ok) {
+          console.warn("ntfy notification failed with HTTP status", response.status);
+          return false;
+        }
+
+        return true;
+      } catch (error) {
+        console.warn("ntfy notification request failed", error);
+        return false;
+      }
     }
 
     function getCartSummary() {
@@ -2409,6 +2441,7 @@
           },
           body: JSON.stringify(orderPayload)
         });
+        await sendNtfyNotification(orderPayload);
         sessionStorage.setItem(LAST_ORDER_TS_KEY, String(Date.now()));
         sessionStorage.setItem(LAST_ORDER_SIGNATURE_KEY, currentSignature);
 
